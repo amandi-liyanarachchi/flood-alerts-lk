@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Flood Alerts LK - local demo network policy.
+
+  WHY THIS FILE EXISTS
+  Android has blocked plain HTTP by default since Android 9 (API 28). Your
+  Flutter code may happily allow HTTP in debug mode, but the platform will still
+  refuse the connection underneath it, and the failure looks like a network
+  timeout rather than a policy error - which is a miserable thing to debug ten
+  minutes before a presentation.
+
+  WHAT IT DOES
+  Permits cleartext HTTP to the demo host ONLY. Everything else on the internet
+  still requires HTTPS, so this is not the blunt
+  `android:usesCleartextTraffic="true"`, which disables the protection app-wide.
+  Worth saying out loud if an examiner asks about security: the exception is
+  scoped to the loopback and emulator addresses, and it applies to debug builds.
+
+  HOW TO INSTALL
+  1. Copy this file to:  android/app/src/main/res/xml/network_security_config.xml
+     (create the res/xml folder if it does not exist)
+
+  2. In android/app/src/main/AndroidManifest.xml add the attribute to the
+     <application> tag:
+
+        <application
+            android:label="Flood Alerts LK"
+            android:networkSecurityConfig="@xml/network_security_config"
+            ... >
+
+  3. Rebuild:  flutter clean && flutter run
+
+  BEFORE YOU SHIP ANYTHING REAL
+  Delete this file and the manifest attribute. Section 5.7 of the backend brief
+  requires HTTPS off the developer's machine, and this file is exactly the thing
+  that would quietly let a release build talk to a plain-HTTP server.
+-->
+<network-security-config>
+
+    <!-- The demo server, and nothing else. -->
+    <domain-config cleartextTrafficPermitted="true">
+
+        <!-- Android emulator's alias for the host laptop. This is the one you
+             need: the emulator cannot see "localhost" - that is the emulated
+             device itself. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+
+        <!-- Physical phone over USB, after: adb reverse tcp:8000 tcp:8000 -->
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+
+        <!-- Physical phone over wifi. Replace with your laptop's LAN address -
+             the server prints it at startup. Leave commented out if you are
+             using the emulator. -->
+        <!-- <domain includeSubdomains="false">192.168.1.11</domain> -->
+
+    </domain-config>
+
+    <!-- Everything else keeps Android's default: HTTPS required. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+</network-security-config>

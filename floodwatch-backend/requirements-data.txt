@@ -1,0 +1,6 @@
+# Dataset building only. Not needed to run the server.
+#   pip install -r requirements-data.txt
+#   python -m scripts.build_dataset
+-r requirements-local.txt
+pandas==2.2.3
+numpy==2.2.1

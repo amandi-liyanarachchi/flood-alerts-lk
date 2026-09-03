@@ -1,0 +1,7 @@
+# Machine learning experiments and thesis figures.
+#   pip install -r requirements-ml.txt
+#   python -m ml.run_experiment --out thesis
+#   python -m thesis.build_sections
+-r requirements-data.txt
+scikit-learn==1.6.1
+matplotlib==3.9.4

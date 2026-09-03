@@ -1,0 +1,20 @@
+# Laptop / presentation install. No Docker, no PostgreSQL, no Firebase.
+#
+# Deliberately smaller than requirements.txt: every package dropped here is one
+# fewer thing that can fail to install the night before a viva.
+#
+#   psycopg        not needed  -- SQLite is the local database
+#   firebase-admin not needed  -- push is imported lazily and stays disabled;
+#                                 alerts still reach the app by polling
+#
+# Install:  pip install -r requirements-local.txt
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+pydantic==2.10.4
+pydantic-settings==2.7.0
+pyjwt==2.10.1
+bcrypt==4.2.1
+httpx==0.28.1
+apscheduler==3.11.0

@@ -1,0 +1,45 @@
+{
+  "base": "http://127.0.0.1:8033",
+  "repeat": 30,
+  "alerts_published": 30,
+  "stages": [
+    {
+      "stage": "store",
+      "n": 30,
+      "median_ms": 2.2,
+      "p90_ms": 2.9,
+      "max_ms": 16.0
+    },
+    {
+      "stage": "score",
+      "n": 30,
+      "median_ms": 105.2,
+      "p90_ms": 124.6,
+      "max_ms": 156.9
+    },
+    {
+      "stage": "read_queue",
+      "n": 30,
+      "median_ms": 3.4,
+      "p90_ms": 4.6,
+      "max_ms": 5.8
+    },
+    {
+      "stage": "authorise",
+      "n": 30,
+      "median_ms": 12.1,
+      "p90_ms": 14.1,
+      "max_ms": 21.2
+    },
+    {
+      "stage": "deliver",
+      "n": 30,
+      "median_ms": 3.7,
+      "p90_ms": 4.7,
+      "max_ms": 5.3
+    }
+  ],
+  "sum_of_stage_medians_ms": 126.6,
+  "measured_at": "2026-08-31T21:49:47.583249+00:00",
+  "note": "Single machine, loopback. Excludes network transit, push provider delivery, and the operator's decision time."
+}

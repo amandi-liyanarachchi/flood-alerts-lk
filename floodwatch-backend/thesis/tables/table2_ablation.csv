@@ -1,0 +1,7 @@
+configuration,groups,n_features,pr_auc,pr_auc_sd
+All features,"river,upstream,rainfall,temporal,crowd",50,0.6067334087917605,0.002310541549384192
+− crowd,"river,upstream,rainfall,temporal",43,0.5972868546754729,0.0064256449113326355
+− upstream,"river,rainfall,temporal,crowd",46,0.6062649330657107,0.006635285743579545
+− rainfall,"river,upstream,temporal,crowd",38,0.4716470461925897,0.004484042619282095
+− temporal,"river,upstream,rainfall,crowd",44,0.6197093699731276,0.0037877127817684
+River state only,river,21,0.315237181027951,0.005974748951346354

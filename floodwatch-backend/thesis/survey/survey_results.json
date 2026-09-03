@@ -1,0 +1,344 @@
+{
+  "respondents": 217,
+  "questions": {
+    "What is your age group? ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "18-24": 66,
+        "Above 45": 53,
+        "36-45": 49,
+        "25-35": 49
+      },
+      "percent": {
+        "18-24": 30.4,
+        "Above 45": 24.4,
+        "36-45": 22.6,
+        "25-35": 22.6
+      }
+    },
+    "  What is your district?  ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Colombo": 71,
+        "Kaluthara": 66,
+        "Gampaha": 54,
+        "Other": 26
+      },
+      "percent": {
+        "Colombo": 32.7,
+        "Kaluthara": 30.4,
+        "Gampaha": 24.9,
+        "Other": 12.0
+      }
+    },
+    "  What type of area do you live in?  ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Urban": 68,
+        "Near a river": 60,
+        "Rural": 43,
+        "Coastal": 41,
+        "Hilly/mountainous": 4,
+        "Other": 1
+      },
+      "percent": {
+        "Urban": 31.3,
+        "Near a river": 27.6,
+        "Rural": 19.8,
+        "Coastal": 18.9,
+        "Hilly/mountainous": 1.8,
+        "Other": 0.5
+      }
+    },
+    "Do you have a smart phone": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Yes": 213,
+        "No": 4
+      },
+      "percent": {
+        "Yes": 98.2,
+        "No": 1.8
+      }
+    },
+    "Have you experienced a flood in your area?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Yes": 206,
+        "No": 11
+      },
+      "percent": {
+        "Yes": 94.9,
+        "No": 5.1
+      }
+    },
+    "How frequently does flooding occur in your area?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Several times a year": 81,
+        "Rarely": 72,
+        "Once every few years": 61,
+        "Never": 3
+      },
+      "percent": {
+        "Several times a year": 37.3,
+        "Rarely": 33.2,
+        "Once every few years": 28.1,
+        "Never": 1.4
+      }
+    },
+    "How much advance warning did you receive during the last flood?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "1–3 hours": 68,
+        "No warning": 55,
+        "Less than 30 minutes": 50,
+        "More than 3 hours": 44
+      },
+      "percent": {
+        "1–3 hours": 31.3,
+        "No warning": 25.3,
+        "Less than 30 minutes": 23.0,
+        "More than 3 hours": 20.3
+      }
+    },
+    "What was the main source of your warning?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Social media": 55,
+        "Friends/family/neighbours": 52,
+        "Police/military": 50,
+        "Television": 41,
+        "SMS": 14,
+        "Other": 3,
+        "Government authorities": 2
+      },
+      "percent": {
+        "Social media": 25.3,
+        "Friends/family/neighbours": 24.0,
+        "Police/military": 23.0,
+        "Television": 18.9,
+        "SMS": 6.5,
+        "Other": 1.4,
+        "Government authorities": 0.9
+      }
+    },
+    "How accurate was the warning?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Partially": 110,
+        "Very inaccurate": 99,
+        "Very Accurate": 8
+      },
+      "percent": {
+        "Partially": 50.7,
+        "Very inaccurate": 45.6,
+        "Very Accurate": 3.7
+      }
+    },
+    "Have you ever received a flood warning too late? ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Yes": 201,
+        "No": 16
+      },
+      "percent": {
+        "Yes": 92.6,
+        "No": 7.4
+      }
+    },
+    "Have you ever received a flood warning that did not affect your location? ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Yes": 185,
+        "No": 32
+      },
+      "percent": {
+        "Yes": 85.3,
+        "No": 14.7
+      }
+    },
+    "How quickly do you normally receive emergency information? ": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "Very slow (More than 30 mins)": 192,
+        "5 min- 30 mins": 17,
+        "Very fast (Less than 5 min)": 8
+      },
+      "percent": {
+        "Very slow (More than 30 mins)": 88.5,
+        "5 min- 30 mins": 7.8,
+        "Very fast (Less than 5 min)": 3.7
+      }
+    },
+    "What problems have you experienced with current flood warnings? \n(Warning arrives too late, Warning is not location-specific, Too many false alarms Information is difficult to understand, No warning received Warning reaches only some people, Lack of internet access Lack of mobile signal Information comes from unreliable sources)": {
+      "kind": "text",
+      "answered": 217,
+      "n_responses": 217,
+      "examples": [
+        "Lack of internet access",
+        "Warning arrives too late, warning is not location-specific, information is difficult to understand, and sometimes no warning is received.",
+        "Too many false alarms",
+        "No warning received, Unaware of alert system",
+        "Information from unreliable sources",
+        "Warning arrives too late",
+        "Lack of mobile signal",
+        "Warning arrives too late",
+        "No warning",
+        "Too late",
+        "Too late arrives",
+        "Warning arrives too late"
+      ]
+    },
+    "How would you prefer to receive an emergency flood warning?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "SMS": 159,
+        "Both": 51,
+        "Mobile application notification": 6,
+        "Neither": 1
+      },
+      "percent": {
+        "SMS": 73.3,
+        "Both": 23.5,
+        "Mobile application notification": 2.8,
+        "Neither": 0.5
+      }
+    },
+    "Which information should a flood warning contain?": {
+      "kind": "multi:;",
+      "answered": 217,
+      "counts": {
+        "Affected area": 134,
+        "Safe evacuation location": 122,
+        "Nearby shelters": 121,
+        "Recommended action": 120,
+        "Current flood risk level": 119,
+        "Expected severity": 117,
+        "Road closures": 112,
+        "Emergency contact numbers": 103,
+        "Expected time of flooding": 100,
+        "Other": 11
+      },
+      "percent": {
+        "Affected area": 61.8,
+        "Safe evacuation location": 56.2,
+        "Nearby shelters": 55.8,
+        "Recommended action": 55.3,
+        "Current flood risk level": 54.8,
+        "Expected severity": 53.9,
+        "Road closures": 51.6,
+        "Emergency contact numbers": 47.5,
+        "Expected time of flooding": 46.1,
+        "Other": 5.1
+      }
+    },
+    "Would you be willing to report flood conditions from your area through a mobile application?": {
+      "kind": "numeric_scale",
+      "answered": 217,
+      "counts": {
+        "1 — not at all": 3,
+        "2": 4,
+        "3 — neutral": 55,
+        "4": 84,
+        "5 — very much": 71
+      },
+      "percent": {
+        "1 — not at all": 1.4,
+        "2": 1.8,
+        "3 — neutral": 25.3,
+        "4": 38.7,
+        "5 — very much": 32.7
+      },
+      "top_two_box": 71.4
+    },
+    "How frequently would you be willing to provide updates during a flood?": {
+      "kind": "ordinal",
+      "answered": 217,
+      "counts": {
+        "Every 3 hours": 43,
+        "Every 1 hour": 42,
+        "Every 6 hours": 33,
+        "Only when I observe flooding": 55,
+        "Once a day": 44
+      },
+      "percent": {
+        "Every 3 hours": 19.8,
+        "Every 1 hour": 19.4,
+        "Every 6 hours": 15.2,
+        "Only when I observe flooding": 25.3,
+        "Once a day": 20.3
+      }
+    },
+    "Would you trust an AI-based system to predict flood risk in your area?": {
+      "kind": "numeric_scale",
+      "answered": 217,
+      "counts": {
+        "2": 4,
+        "3 — neutral": 11,
+        "4": 113,
+        "5 — very much": 89
+      },
+      "percent": {
+        "2": 1.8,
+        "3 — neutral": 5.1,
+        "4": 52.1,
+        "5 — very much": 41.0
+      },
+      "top_two_box": 93.1
+    },
+    "What level of warning would you prefer?": {
+      "kind": "single",
+      "answered": 217,
+      "counts": {
+        "🟡 Moderate Risk": 67,
+        "🟠 High Risk": 63,
+        "🔴 Critical/Evacuate": 44,
+        "🟢Low Risk": 43
+      },
+      "percent": {
+        "🟡 Moderate Risk": 30.9,
+        "🟠 High Risk": 29.0,
+        "🔴 Critical/Evacuate": 20.3,
+        "🟢Low Risk": 19.8
+      }
+    },
+    "What is the most important feature you would expect from a smart flood early warning system?": {
+      "kind": "multi:;",
+      "answered": 217,
+      "counts": {
+        "Real-time flood updates": 134,
+        "Early warnings": 134,
+        "Evacuation guidance": 126,
+        "Crowdsourced information": 126,
+        "Accurate prediction": 122,
+        "Location-based alerts": 122,
+        "Multiple communication channels": 105,
+        "AI-based risk prediction": 97
+      },
+      "percent": {
+        "Real-time flood updates": 61.8,
+        "Early warnings": 61.8,
+        "Evacuation guidance": 58.1,
+        "Crowdsourced information": 58.1,
+        "Accurate prediction": 56.2,
+        "Location-based alerts": 56.2,
+        "Multiple communication channels": 48.4,
+        "AI-based risk prediction": 44.7
+      }
+    }
+  }
+}

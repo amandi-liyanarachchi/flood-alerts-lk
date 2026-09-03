@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flood Alerts LK — operations</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#171d25; --panel2:#1e252f; --line:#2a323d;
+    --ink:#e8eef5; --muted:#93a1b3; --accent:#4da3ff;
+    --low:#e0b341; --moderate:#e2803c; --high:#e05252; --ok:#4cae7a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  header{display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+         padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+  header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .spacer{flex:1}
+  input,button,select,textarea{font:inherit;border-radius:7px;border:1px solid var(--line);
+         background:var(--panel2);color:var(--ink);padding:6px 10px}
+  button{cursor:pointer;background:#243040;border-color:#31404f}
+  button:hover{background:#2c3a4d}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#04121f;font-weight:600}
+  button.danger{background:#3a2226;border-color:#5a2f35;color:#ffb4b4}
+  main{padding:18px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card > h2{margin:0;padding:12px 16px;font-size:13px;font-weight:650;
+             text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+             border-bottom:1px solid var(--line)}
+  .card > .body{padding:14px 16px}
+  .wide{grid-column:1/-1}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line)}
+  .stat{background:var(--panel);padding:12px 14px}
+  .stat b{display:block;font-size:22px;font-weight:650;letter-spacing:-.4px}
+  .stat span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  #map{height:420px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;
+     text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:8px 10px;border-bottom:1px solid #212a34}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:650;
+        text-transform:uppercase;letter-spacing:.4px}
+  .pill.low{background:#3a3320;color:var(--low)}
+  .pill.moderate{background:#3c2a1c;color:var(--moderate)}
+  .pill.high{background:#3a2124;color:var(--high)}
+  .pill.normal,.pill.ok{background:#1f3129;color:var(--ok)}
+  .pill.alert{background:#3a3320;color:var(--low)}
+  .pill.minor{background:#3c2a1c;color:var(--moderate)}
+  .pill.major{background:#3a2124;color:var(--high)}
+  .pill.unknown{background:#262d36;color:var(--muted)}
+  .proposal{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--panel2)}
+  .proposal h3{margin:0 0 6px;font-size:14px}
+  .proposal .why{color:var(--muted);font-size:12.5px;margin:6px 0 10px}
+  .proposal .why li{margin:2px 0}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .muted{color:var(--muted)}
+  .empty{color:var(--muted);padding:6px 0;font-style:italic}
+  details summary{cursor:pointer;color:var(--muted);font-size:12px}
+  pre{background:#11161c;border:1px solid var(--line);border-radius:8px;padding:10px;
+      overflow:auto;font-size:11.5px;max-height:280px}
+  .scroll{max-height:360px;overflow:auto}
+  #toast{position:fixed;right:18px;bottom:18px;background:var(--panel2);border:1px solid var(--line);
+         border-radius:10px;padding:10px 14px;display:none;max-width:340px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Flood Alerts LK · operations</h1>
+  <span class="muted" id="clock"></span>
+  <div class="spacer"></div>
+  <input id="operator" placeholder="Your name (recorded on decisions)" size="26">
+  <input id="token" type="password" placeholder="Admin token" size="20">
+  <button class="primary" onclick="saveToken()">Connect</button>
+  <button onclick="refreshAll()">Refresh</button>
+</header>
+
+<main>
+  <section class="card wide">
+    <h2>Now</h2>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="card wide">
+    <h2>Regions &amp; gauges — last 24 h</h2>
+    <div id="map"></div>
+  </section>
+
+  <section class="card">
+    <h2>Awaiting your decision</h2>
+    <div class="body scroll" id="proposals"><p class="empty">Not loaded.</p></div>
+  </section>
+
+  <section class="card">
+    <h2>Alerts</h2>
+    <div class="body scroll" id="alerts"><p class="empty">Not loaded.</p></div>
+  </section>
+
+  <section class="card wide">
+    <h2>Community reports with no instrument agreement — investigate</h2>
+    <div class="body">
+      <p class="muted" style="margin-top:0">
+        People here report flooding and no gauge or rainfall figure supports them. These never
+        become alerts on their own. Localised urban and drain-blockage flooding is real and
+        invisible to river gauges, so these are worth a phone call — and whether they turn out
+        to be real is the crowdsourcing result the study is measuring.
+      </p>
+      <table id="signals"><tbody><tr><td class="empty">Not loaded.</td></tr></tbody></table>
+    </div>
+  </section>
+
+  <section class="card wide">
+    <h2>River gauges</h2>
+    <div class="scroll"><table id="gauges"><tbody><tr><td class="empty">Not loaded.</td></tr></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Model vs rainfall-only baseline</h2>
+    <div class="body">
+      <div class="row" style="margin-bottom:10px">
+        <button onclick="loadMetrics()">Compute</button>
+        <span class="muted">Needs rows in <code>flood_events</code>.</span>
+      </div>
+      <pre id="metrics">—</pre>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Pipeline</h2>
+    <div class="body">
+      <div class="row" style="margin-bottom:10px">
+        <button onclick="post('/ingest/stations')">Refresh stations</button>
+        <button onclick="post('/ingest/readings',{pages:1})">Pull readings</button>
+        <button onclick="post('/ingest/rainfall')">Pull rainfall</button>
+        <button onclick="post('/evaluate')">Run evaluation</button>
+      </div>
+      <details>
+        <summary>Upstream data-quality check</summary>
+        <div class="row" style="margin:10px 0">
+          <button onclick="loadQuality()">Check threshold agreement</button>
+        </div>
+        <pre id="quality">—</pre>
+      </details>
+    </div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API = '/api/v1/admin';
+let map, layerRegions, layerGauges;
+
+function token(){ return localStorage.getItem('fw_admin_token') || ''; }
+function operator(){ return document.getElementById('operator').value.trim() || 'unnamed-operator'; }
+
+function saveToken(){
+  localStorage.setItem('fw_admin_token', document.getElementById('token').value);
+  localStorage.setItem('fw_operator', document.getElementById('operator').value);
+  refreshAll();
+}
+
+function toast(msg, ms=3500){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(el._t); el._t = setTimeout(()=>el.style.display='none', ms);
+}
+
+async function api(path, opts={}){
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: {'Content-Type':'application/json', 'X-Admin-Token': token(), ...(opts.headers||{})}
+  });
+  const body = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(body?.error?.message || res.status);
+  return body;
+}
+async function post(path, payload){
+  try { const r = await api(path, {method:'POST', body: JSON.stringify(payload||{})});
+        toast(JSON.stringify(r).slice(0,220)); refreshAll(); }
+  catch(e){ toast('Failed: ' + e.message); }
+}
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sev = s => `<span class="pill ${esc(s||'unknown')}">${esc(s||'none')}</span>`;
+
+async function loadSummary(){
+  const s = await api('/summary');
+  const cells = [
+    ['Users', s.users], ['Active 24 h', s.activeUsers24h], ['Pings 24 h', s.pings24h],
+    ['Answers 24 h', s.feedback24h], ['“Yes” 24 h', s.yes24h], ['Devices', s.devices],
+    ['Stations', s.stations], ['Readings 24 h', s.readings24h],
+    ['Pending', s.pendingProposals], ['Live alerts', s.liveAlerts],
+  ];
+  document.getElementById('stats').innerHTML = cells
+    .map(([k,v]) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+  document.getElementById('clock').textContent =
+    `region precision ${s.config.regionPrecision} · ${s.config.crowdMinRespondents}+ respondents / ${s.config.crowdWindowMinutes} min · ≥${Math.round(s.config.crowdYesRatio*100)}% yes`;
+}
+
+async function loadMap(){
+  // Leaflet is loaded from a CDN. If the operator is offline, or the CDN is
+  // unreachable, the map is simply unavailable — every other panel must still
+  // work, because the gauge table and the proposal queue are what the operator
+  // actually needs during a flood.
+  if(typeof L === 'undefined'){
+    document.getElementById('map').innerHTML =
+      '<p class="empty" style="padding:16px">Map tiles unavailable offline. All other panels are unaffected.</p>';
+    return;
+  }
+  if(!map){
+    map = L.map('map', {scrollWheelZoom:false}).setView([7.0, 80.4], 8);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      {attribution:'&copy; OpenStreetMap, &copy; CARTO', maxZoom:18}).addTo(map);
+    layerRegions = L.layerGroup().addTo(map);
+    layerGauges = L.layerGroup().addTo(map);
+  }
+  layerRegions.clearLayers(); layerGauges.clearLayers();
+  const {stations} = await api('/gauges');
+
+  const colours = {high:'#e05252', moderate:'#e2803c', low:'#e0b341'};
+  const {regions} = await api('/regions?hours=24');
+  regions.forEach(r => {
+    const colour = colours[r.severity] || '#4da3ff';
+    L.circleMarker([r.latitude, r.longitude], {
+      radius: Math.min(22, 5 + Math.sqrt((r.pings||0)) * 1.2),
+      color: colour, weight: 1.5, fillColor: colour, fillOpacity: 0.28
+    }).bindPopup(
+      `<b>${esc(r.region)}</b><br>${r.users} users · ${r.pings} pings<br>` +
+      `${r.answers||0} answers (${r.yes||0} yes)<br>score ${r.score ?? '—'} ${r.severity||''}` +
+      `<br><a href="#" onclick="showRegion('${esc(r.region)}');return false;">inspect</a>`
+    ).addTo(layerRegions);
+  });
+
+}
+
+async function loadGauges(){
+  // Deliberately independent of loadMap(). The gauge table is what an operator
+  // needs during a flood; it must not disappear because a mapping CDN is
+  // unreachable.
+  const {stations} = await api('/gauges');
+  document.getElementById('gauges').innerHTML =
+    '<thead><tr><th>Station</th><th>Basin</th><th>Level (m)</th><th>Alert</th><th>Minor</th><th>Major</th><th>Rain</th><th>State</th><th>Observed</th></tr></thead><tbody>' +
+    stations.map(s => `<tr>
+        <td>${esc(s.station)}${s.sourceUnit==='ft' ? ' <span class="muted" title="published in feet, converted">ft→m</span>':''}</td>
+        <td class="muted">${esc(s.basin||'')}</td>
+        <td><b>${s.waterLevelM ?? '—'}</b></td>
+        <td class="muted">${s.alertLevelM ?? '—'}</td>
+        <td class="muted">${s.minorFloodLevelM ?? '—'}</td>
+        <td class="muted">${s.majorFloodLevelM ?? '—'}</td>
+        <td class="muted">${s.rainfallMm ?? '—'}</td>
+        <td>${sev(s.state)}</td>
+        <td class="muted">${esc(s.observedAt||'')}</td></tr>`).join('') + '</tbody>';
+}
+
+async function showRegion(region){
+  try{
+    const d = await api('/regions/' + encodeURIComponent(region));
+    toast(region + ': rules_v1 ' + d.engines.rules_v1.score + ' (' + (d.engines.rules_v1.severity||'none') + ')', 6000);
+    document.getElementById('metrics').textContent = JSON.stringify(d, null, 2);
+  }catch(e){ toast('Failed: ' + e.message); }
+}
+
+async function loadProposals(){
+  const {proposals} = await api('/proposals?status=proposed');
+  const box = document.getElementById('proposals');
+  if(!proposals.length){ box.innerHTML = '<p class="empty">Nothing pending. The model has proposed no alerts.</p>'; return; }
+  box.innerHTML = proposals.map(p => `
+    <div class="proposal">
+      <h3>${sev(p.severity)} ${esc(p.title)}</h3>
+      <div class="muted">region ${esc(p.region)} · score ${p.score} · ${esc(p.createdAt)}</div>
+      <ul class="why">${(p.explanation?.reasons||[]).map(r=>`<li>${esc(r)}</li>`).join('') || '<li>No stated reason.</li>'}</ul>
+      <textarea id="msg-${p.id}" rows="2" style="width:100%">${esc(p.message)}</textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="primary" onclick="approve(${p.id})">Approve &amp; send</button>
+        <button class="danger" onclick="dismiss(${p.id})">Dismiss</button>
+        <details><summary>evidence</summary><pre>${esc(JSON.stringify(p.explanation, null, 2))}</pre></details>
+      </div>
+    </div>`).join('');
+}
+
+async function approve(id){
+  const message = document.getElementById('msg-'+id).value;
+  if(!confirm('Send this alert to every phone in the region?')) return;
+  await post(`/proposals/${id}/approve`, {operator: operator(), message});
+}
+async function dismiss(id){
+  const note = prompt('Why are you dismissing this? (optional, kept as a labelled negative)') || null;
+  await post(`/proposals/${id}/dismiss`, {operator: operator(), note});
+}
+
+async function loadAlerts(){
+  const {alerts} = await api('/alerts?limit=25');
+  const box = document.getElementById('alerts');
+  if(!alerts.length){ box.innerHTML = '<p class="empty">No alerts have ever been issued.</p>'; return; }
+  box.innerHTML = alerts.map(a => `
+    <div class="proposal">
+      <h3>${sev(a.severity)} ${esc(a.title)} ${a.live?'<span class="pill ok">live</span>':'<span class="pill unknown">ended</span>'}</h3>
+      <div class="muted">${esc(a.id)} · ${esc(a.regions.join(', '))} · issued ${esc(a.issuedAt)} by ${esc(a.issuedBy||'—')}</div>
+      <p style="margin:8px 0">${esc(a.message)}</p>
+      <div class="muted" style="font-size:12px">expires ${esc(a.expiresAt)}${a.retractedAt?` · retracted ${esc(a.retractedAt)}`:''}
+        ${a.push ? ` · push: ${a.push.sent ?? 0}/${a.push.targeted ?? 0}${a.push.enabled===false?' (push disabled)':''}` : ''}</div>
+      ${a.live ? `<div class="row" style="margin-top:8px"><button class="danger" onclick="retract('${esc(a.id)}')">Retract</button></div>` : ''}
+    </div>`).join('');
+}
+async function retract(id){
+  if(!confirm('Retract ' + id + '? Users stop seeing it on their next refresh.')) return;
+  await post(`/alerts/${id}/retract`, {operator: operator()});
+}
+
+async function loadSignals(){
+  const {signals} = await api('/community-signals?hours=6');
+  const el = document.getElementById('signals');
+  if(!signals.length){
+    el.innerHTML = '<tbody><tr><td class="empty">No unsupported community reports in the last 6 hours.</td></tr></tbody>';
+    return;
+  }
+  el.innerHTML = '<thead><tr><th>Region</th><th>Respondents</th><th>Reporting flooding</th><th>Ratio</th><th>Physical support</th><th>Seen</th><th></th></tr></thead><tbody>' +
+    signals.map(s => `<tr>
+      <td><code>${esc(s.region)}</code></td>
+      <td>${s.respondents ?? '—'}</td>
+      <td><b>${s.yes ?? '—'}</b></td>
+      <td>${s.ratio != null ? Math.round(s.ratio*100)+'%' : '—'}</td>
+      <td class="muted">${s.physicalSupport ?? '—'}</td>
+      <td class="muted">${esc(s.computedAt)}</td>
+      <td><button onclick="map.setView([${s.latitude},${s.longitude}],13);showRegion('${esc(s.region)}')">inspect</button></td>
+    </tr>`).join('') + '</tbody>';
+}
+
+async function loadMetrics(){
+  try{ document.getElementById('metrics').textContent =
+        JSON.stringify(await api('/metrics?days=30'), null, 2); }
+  catch(e){ document.getElementById('metrics').textContent = 'Failed: ' + e.message; }
+}
+async function loadQuality(){
+  try{ document.getElementById('quality').textContent =
+        JSON.stringify(await api('/data-quality'), null, 2); }
+  catch(e){ document.getElementById('quality').textContent = 'Failed: ' + e.message; }
+}
+
+async function refreshAll(){
+  if(!token()){ toast('Enter the admin token to connect.'); return; }
+  // One failing panel must not suppress the rest. Before this was a `continue`
+  // a Leaflet CDN failure left the proposal queue and gauge table permanently
+  // showing "Not loaded", with no indication that anything had gone wrong.
+  const failures = [];
+  for(const fn of [loadSummary, loadMap, loadGauges, loadProposals, loadAlerts, loadSignals]){
+    try{ await fn(); }catch(e){ failures.push(fn.name + ': ' + e.message); }
+  }
+  if(failures.length) toast(failures.length + ' panel(s) failed — ' + failures[0]);
+}
+
+document.getElementById('token').value = token();
+document.getElementById('operator').value = localStorage.getItem('fw_operator') || '';
+if(token()) refreshAll();
+setInterval(()=>{ if(token()) { loadSummary().catch(()=>{}); loadProposals().catch(()=>{}); } }, 60000);
+</script>
+</body>
+</html>
