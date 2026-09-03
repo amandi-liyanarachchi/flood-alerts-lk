@@ -59,3 +59,22 @@ key.properties
 build/
 .flutter-plugins
 .packages
+
+.env
+secrets/
+*.db
+*.sqlite3
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+
+# Never commit these. The repo may be published alongside the paper.
+google-services.json
+GoogleService-Info.plist
+*service-account*.json
+*firebase-adminsdk*.json
